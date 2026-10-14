@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Melon Marketeer - Live Animal Jam Classic Item Worth & Shop Prices</title>
+  <meta name="description" content="Look up any Animal Jam Classic item's worth by color, see live player shop prices, who is selling it, and how values trend. Free AJC item worth and price tracker." />
+  <meta name="theme-color" content="#e3416b" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Melon Marketeer" />
+  <meta property="og:title" content="Melon Marketeer - Animal Jam Classic Item Worth & Shop Prices" />
+  <meta property="og:description" content="Look up any Animal Jam Classic item's worth by color and live player shop prices. Free AJC item worth and price tracker." />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Melon Marketeer - Animal Jam Classic Item Worth & Shop Prices" />
+  <meta name="twitter:description" content="Look up any Animal Jam Classic item's worth by color and live player shop prices." />
+  <script>(function(){try{var t=localStorage.getItem('mm-theme');if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <script>window.MM_LINKS={discord:'https://discord.gg/a2y6bZnhB3',donate:'https://ko-fi.com/glockoma'};</script>
+  <link rel="icon" type="image/png" sizes="32x32" href="melon-icon.png" />
+  <link rel="apple-touch-icon" href="melon-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/tokens.css?v=mm-20260629c" />
+  <link rel="stylesheet" href="styles.css?v=mm-20260629c" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/">
+      <img class="logo" src="melon-icon.png" alt="" width="36" height="36" />
+      <span class="brand-name">Melon Marketeer</span>
+    </a>
+    <form id="nav-search" class="nav-search">
+      <input id="nav-search-input" type="search" placeholder="Search an item or seller..." autocomplete="off" />
+      <button type="submit" aria-label="Search">Search</button>
+    </form>
+    <nav class="nav-links" id="nav-links">
+      <a href="#/">Home</a>
+      <a href="#/sellers">Sellers</a>
+    </nav>
+    <div class="head-actions">
+      <a id="scraper-status" class="scraper-status" href="#/" hidden></a>
+      <button id="nav-toggle" class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links"></button>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle dark or light mode"></button>
+    </div>
+  </header>
+
+  <main id="view"></main>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-col footer-about">
+        <div class="footer-brand"><img class="logo" src="melon-icon.png" alt="" width="30" height="30" /><span>Melon Marketeer</span></div>
+        <p class="footer-tag">Live player shop prices for Animal Jam Classic. Always check a trade in game.</p>
+        <a class="credit-badge" href="https://github.com/DrEmoji/AJCBots" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>Built on <strong>AJCBots</strong><span class="dot"></span><span class="by">by DrEmoji</span></a>
+      </div>
+      <div class="footer-col">
+        <h4>More from glvckoma</h4>
+        <a href="https://github.com/glvckoma/Berry-Breach" target="_blank" rel="noopener">Berry Breach</a>
+        <a href="https://github.com/glvckoma/Strawberry-Jam" target="_blank" rel="noopener">Strawberry Jam</a>
+      </div>
+      <div class="footer-col">
+        <h4>Community</h4>
+        <div class="footer-actions">
+          <a class="btn-pill discord" data-link="discord" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.369A19.79 19.79 0 0 0 16.558 3c-.2.36-.43.84-.59 1.23a18.27 18.27 0 0 0-5.94 0C9.87 3.84 9.63 3.36 9.43 3a19.7 19.7 0 0 0-3.76 1.37C2.6 9.36 1.85 14.22 2.18 19.02a19.9 19.9 0 0 0 6.03 3.06c.49-.67.92-1.38 1.29-2.13-.71-.27-1.39-.6-2.03-.99.17-.13.34-.26.5-.4 3.93 1.84 8.18 1.84 12.06 0 .16.14.33.27.5.4-.64.39-1.32.72-2.03.99.37.75.8 1.46 1.29 2.13a19.9 19.9 0 0 0 6.03-3.06c.39-5.56-.83-10.38-3.51-14.65ZM8.02 15.33c-1.18 0-2.16-1.08-2.16-2.42 0-1.33.95-2.42 2.16-2.42 1.21 0 2.18 1.09 2.16 2.42 0 1.34-.95 2.42-2.16 2.42Zm7.96 0c-1.18 0-2.16-1.08-2.16-2.42 0-1.33.95-2.42 2.16-2.42 1.21 0 2.18 1.09 2.16 2.42 0 1.34-.95 2.42-2.16 2.42Z"/></svg>Discord</a>
+          <a class="btn-pill donate" data-link="donate" target="_blank" rel="noopener"><i data-lucide="heart"></i>Donate</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-base">Developed by <a href="https://github.com/glvckoma" target="_blank" rel="noopener">glvckoma</a> &middot; Not affiliated with WildWorks or Animal Jam Classic.</div>
+  </footer>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script>
+    (function () {
+      var links = window.MM_LINKS || {};
+      document.querySelectorAll('[data-link]').forEach(function (a) {
+        var u = links[a.getAttribute('data-link')];
+        if (u && u.indexOf('REPLACE_ME') === -1) a.href = u;
+        else { a.removeAttribute('href'); a.classList.add('disabled'); a.title = 'Link coming soon'; }
+      });
+    })();
+    (function () {
+      var btn = document.getElementById('theme-toggle');
+      function current() { return document.documentElement.getAttribute('data-theme') || 'dark'; }
+      function paint() {
+        var icon = current() === 'dark' ? 'sun' : 'moon';
+        if (window.lucide) { btn.innerHTML = '<i data-lucide="' + icon + '"></i>'; window.lucide.createIcons(); }
+        else { btn.textContent = current() === 'dark' ? 'Light' : 'Dark'; }
+      }
+      btn.addEventListener('click', function () {
+        var next = current() === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('mm-theme', next); } catch (e) {}
+        paint();
+      });
+      paint();
+    })();
+    (function () {
+      var toggle = document.getElementById('nav-toggle');
+      var nav = document.getElementById('nav-links');
+      var BP = 960;
+      function paintIcon() {
+        var open = nav.classList.contains('open');
+        if (window.lucide) { toggle.innerHTML = '<i data-lucide="' + (open ? 'x' : 'menu') + '"></i>'; window.lucide.createIcons(); }
+        else { toggle.textContent = open ? 'Close' : 'Menu'; }
+      }
+      function setOpen(open) {
+        nav.classList.toggle('open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+        paintIcon();
+      }
+      toggle.addEventListener('click', function () { setOpen(!nav.classList.contains('open')); });
+      nav.addEventListener('click', function (e) { if (e.target.closest('a')) setOpen(false); });
+      window.addEventListener('hashchange', function () { setOpen(false); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+      window.addEventListener('resize', function () { if (window.innerWidth > BP && nav.classList.contains('open')) setOpen(false); });
+      paintIcon();
+    })();
+  </script>
+  <script src="app.js?v=mm-20260629c"></script>
+</body>
+</html>

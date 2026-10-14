@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Melon Marketeer Hub</title>
+  <script>(function(){try{var t=localStorage.getItem('mm-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <link rel="icon" type="image/png" sizes="32x32" href="melon-icon.png" />
+  <link rel="apple-touch-icon" href="melon-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/tokens.css?v=mm-20260629f">
+  <link rel="stylesheet" href="styles.css?v=mm-20260629f">
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <div class="side-brand">
+      <img class="brand-logo" src="melon-icon.png" alt="" width="30" height="30" />
+      <span class="brand-text">Melon <b>Marketeer</b></span>
+      <span class="dot" id="conn-dot" title="live connection"></span>
+    </div>
+    <nav class="side-nav">
+      <div class="nav-group">
+        <div class="nav-group-title">Main</div>
+        <a class="nav-link" data-page="dashboard" href="#/dashboard"><i data-lucide="layout-dashboard"></i><span class="nav-label">Dashboard</span></a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-title">Pipeline</div>
+        <a class="nav-link" data-page="operations" href="#/operations"><i data-lucide="radar"></i><span class="nav-label">Operations</span></a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-title">Marketplace</div>
+        <a class="nav-link" data-page="items" href="#/items"><i data-lucide="package"></i><span class="nav-label">Catalog</span></a>
+        <a class="nav-link" data-page="sellers" href="#/sellers"><i data-lucide="store"></i><span class="nav-label">Sellers</span></a>
+        <a class="nav-link" data-page="watchlist" href="#/watchlist"><i data-lucide="bell"></i><span class="nav-label">Watchlist</span> <span class="badge" id="alert-badge"></span></a>
+      </div>
+    </nav>
+  </aside>
+
+  <div class="shell">
+    <header class="topbar">
+      <button id="drawer-toggle" class="drawer-toggle" type="button" aria-label="Toggle navigation"><i data-lucide="menu"></i></button>
+      <div class="topstatus" id="topstatus"></div>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle dark or light mode"></button>
+    </header>
+
+    <main id="view">
+      <section class="page" id="page-dashboard">
+        <div class="kpi-row" id="dash-kpis"></div>
+        <div class="grid">
+          <section class="card span-2">
+            <div class="card-head"><h2>Scraper Status</h2><span class="muted" id="dash-scraper-live">live</span></div>
+            <div id="dash-scraper" class="continuous"></div>
+          </section>
+          <section class="card">
+            <div class="card-head"><h2>Currency Split</h2></div>
+            <div id="dash-currency" class="chart-pad"></div>
+          </section>
+          <section class="card">
+            <div class="card-head"><h2>Observations / hour</h2><span class="muted">last 24h</span></div>
+            <div id="dash-throughput" class="chart-pad"></div>
+          </section>
+          <section class="card span-2">
+            <div class="card-head"><h2>Data Quality</h2><span class="muted" id="dash-cov-summary"></span></div>
+            <div class="chart-pad" id="dash-quality"></div>
+          </section>
+          <section class="card span-2">
+            <div class="card-head"><h2>Recently Observed</h2></div>
+            <div class="table-wrap">
+              <table id="dash-recent">
+                <thead><tr><th>Item</th><th>Color</th><th>Cost</th><th>Cur</th><th>Seller</th><th>When</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="page-operations">
+        <div class="ops-tabs tabs" id="ops-tabs">
+          <button class="tab active" data-ops="scraper" type="button">Scraper</button>
+          <button class="tab" data-ops="fleet" type="button">Fleet</button>
+          <button class="tab" data-ops="diagnostics" type="button">Diagnostics</button>
+          <button class="tab" data-ops="queues" type="button">Queues</button>
+        </div>
+        <div class="ops-panel active" id="ops-scraper"></div>
+        <div class="ops-panel" id="ops-fleet"></div>
+        <div class="ops-panel" id="ops-diagnostics"></div>
+        <div class="ops-panel" id="ops-queues">
+          <div class="grid">
+            <section class="card span-2">
+              <div class="card-head"><h2>Recheck Queue <span class="muted" id="ops-priority-count"></span></h2><span class="muted">priority rescrape</span></div>
+              <div class="table-wrap"><table id="ops-priority"><thead><tr><th>Owner</th></tr></thead><tbody></tbody></table></div>
+            </section>
+            <section class="card span-2">
+              <div class="card-head"><h2>Stale Sellers <span class="muted" id="ops-stale-count"></span></h2><span class="muted">due for re-scrape</span></div>
+              <div class="table-wrap"><table id="ops-stale"><thead><tr><th>Owner</th></tr></thead><tbody></tbody></table></div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-scraping">
+        <div class="grid">
+          <section class="card span-2">
+            <div class="card-head">
+              <h2>Continuous Scraper</h2>
+              <div class="controls">
+                <select id="mode-select" class="select" title="Dead = scrape known username pool now. Live = roam rooms to find online players first. Auto = live, then fall back to the pool.">
+                  <option value="dead">Dead pool</option>
+                  <option value="live">Live roam</option>
+                  <option value="auto">Auto</option>
+                </select>
+                <button id="btn-start" class="btn ok">Start</button>
+                <button id="btn-stop" class="btn danger">Stop</button>
+              </div>
+            </div>
+            <div id="continuous" class="continuous"></div>
+          </section>
+
+          <section class="card span-2">
+            <div class="card-head">
+              <h2>Scraper Settings</h2>
+              <div class="controls">
+                <button id="btn-apply-config" class="btn ok">Apply</button>
+                <button id="btn-reload-config" class="btn">Reload</button>
+              </div>
+            </div>
+            <div id="settings" class="settings"></div>
+          </section>
+
+          <section class="card span-2">
+            <div class="card-head">
+              <h2>Accounts <span class="muted" id="fleet-count"></span></h2>
+              <div class="controls">
+                <button id="btn-login" class="btn ok">Log in selected</button>
+                <button id="btn-logout" class="btn danger">Log out selected</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table id="fleet-table">
+                <thead><tr>
+                  <th><input type="checkbox" id="select-all"></th>
+                  <th>Account</th><th>Status</th><th>Room</th><th>Activity</th><th>Updated</th>
+                </tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="card span-2">
+            <div class="card-head">
+              <h2>Username Pools <span class="muted" id="usernames-count"></span></h2>
+              <div class="controls">
+                <input id="user-search" class="select" type="text" placeholder="search username" style="min-width:160px">
+                <select id="user-filter" class="select">
+                  <option value="all">All observed</option>
+                  <option value="live">Live now</option>
+                  <option value="dead">Dead</option>
+                  <option value="unscraped">Unscraped</option>
+                  <option value="scraped">Scraped</option>
+                  <option value="sellers">Known sellers</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table id="usernames-table">
+                <thead><tr><th>Username</th><th>Source</th><th>Live</th><th>Scraped</th><th>First seen</th><th>Last seen</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="card span-2">
+            <div class="card-head"><h2>Recent Observations</h2></div>
+            <div class="table-wrap">
+              <table id="recent-table">
+                <thead><tr><th>Item</th><th>Color</th><th>Cost</th><th>Cur</th><th>Seller</th><th>When</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="card span-2">
+            <div class="card-head"><h2>Trade Lists <span class="muted" id="tradelist-count"></span></h2></div>
+            <div class="table-wrap">
+              <table id="tradelist-table">
+                <thead><tr><th>Owner</th><th class="num">Items</th><th class="num">Clothing</th><th class="num">Den</th><th class="num">Pet</th><th>Captured</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="page-items">
+        <div class="grid">
+          <section class="card span-2">
+            <div class="card-head"><h2>Data Quality</h2><span class="muted">coverage by item type</span></div>
+            <div class="chart-pad" id="dq-matrix"></div>
+            <div id="dq-drill"></div>
+          </section>
+          <section class="card span-2">
+            <div class="card-head">
+              <h2>Catalog <span class="muted" id="items-count"></span></h2>
+              <div class="controls">
+                <input id="item-search" class="select" type="text" placeholder="search name" style="min-width:180px">
+                <select id="item-currency" class="select">
+                  <option value="all">All currencies</option>
+                  <option value="gems">Gems</option>
+                  <option value="diamonds">Diamonds</option>
+                </select>
+                <select id="item-sort" class="select">
+                  <option value="observations"># observed</option>
+                  <option value="sellers">Sellers</option>
+                  <option value="max">Highest price</option>
+                  <option value="min">Lowest price</option>
+                  <option value="lastSeen">Recently seen</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table id="items-table">
+                <thead><tr><th>Item</th><th>Cur</th><th>Sellers</th><th>#</th><th>Min</th><th>Median</th><th>Avg</th><th>Max</th><th>Last seen</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+          <section class="card span-2" id="item-detail-card" style="display:none">
+            <div class="card-head">
+              <h2 id="item-detail-title">Item</h2>
+              <div class="controls">
+                <input id="watch-max" class="select" type="number" min="0" placeholder="alert below price" style="width:150px">
+                <select id="watch-cur" class="select">
+                  <option value="any">any currency</option>
+                  <option value="gems">gems</option>
+                  <option value="diamonds">diamonds</option>
+                </select>
+                <button id="watch-item-btn" class="btn star">★ Watch</button>
+                <button id="item-detail-close" class="btn">Close</button>
+              </div>
+            </div>
+            <div id="item-detail" class="detail"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="page-sellers">
+        <div class="grid">
+          <section class="card span-2">
+            <div class="card-head">
+              <h2>Sellers <span class="muted" id="sellers-count"></span></h2>
+              <div class="controls">
+                <input id="seller-search" class="select" type="text" placeholder="search seller" style="min-width:180px">
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table id="sellers-table">
+                <thead><tr><th>Seller</th><th>Items</th><th>#</th><th>Last seen</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+          <section class="card span-2" id="seller-detail-card" style="display:none">
+            <div class="card-head">
+              <h2 id="seller-detail-title">Seller</h2>
+              <div class="controls">
+                <button id="watch-seller-btn" class="btn star">★ Watch seller</button>
+                <button id="seller-detail-close" class="btn">Close</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table id="seller-detail-table">
+                <thead><tr><th>Item</th><th>Color</th><th>Cost</th><th>Cur</th><th>Last seen</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="page-fleet">
+        <div class="grid">
+          <section class="card span-2">
+            <div class="card-head">
+              <h2>Targeted Scrape</h2>
+              <div class="controls">
+                <button id="btn-enqueue" class="btn">Enqueue to pool</button>
+                <button id="btn-scrape" class="btn ok">Scrape now</button>
+                <button id="btn-scrape-stop" class="btn danger">Stop</button>
+              </div>
+            </div>
+            <div class="scrape-panel">
+              <textarea id="scrape-input" class="scrape-input" placeholder="Paste usernames, one per line. Leave empty + Scrape now to drain the queued pool."></textarea>
+              <div id="scrape-job" class="scrape-job"></div>
+            </div>
+          </section>
+
+          <section class="card span-2">
+            <div class="card-head">
+              <h2>Live Fleet <span class="muted" id="fleet-live-count"></span></h2>
+            </div>
+            <div id="fleet-grid" class="fleet-grid"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="page-watchlist">
+        <div class="grid">
+          <section class="card span-2">
+            <div class="card-head">
+              <h2>Alerts <span class="muted" id="alerts-count"></span></h2>
+              <div class="controls">
+                <button id="btn-ack-alerts" class="btn ok">Mark all read</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table id="alerts-table">
+                <thead><tr><th>Watch</th><th>Item</th><th>Color</th><th>Cost</th><th>Cur</th><th>Seller</th><th>When</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+          <section class="card span-2">
+            <div class="card-head"><h2>Active Watches <span class="muted" id="watches-count"></span></h2></div>
+            <div class="table-wrap">
+              <table id="watches-table">
+                <thead><tr><th>Label</th><th>Kind</th><th>Criteria</th><th>Created</th><th></th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="page-diagnostics">
+        <div class="grid">
+          <section class="card">
+            <div class="card-head"><h2>Currency Skew</h2></div>
+            <div id="diag-currency" class="chart-pad"></div>
+          </section>
+          <section class="card">
+            <div class="card-head"><h2>Active Scrape Job</h2></div>
+            <div id="diag-job" class="scrape-job"></div>
+          </section>
+          <section class="card span-2">
+            <div class="card-head"><h2>Image Coverage <span class="muted" id="cov-summary"></span></h2></div>
+            <div class="chart-pad">
+              <div class="progress" style="height:14px;"><span id="cov-bar" style="width:0%"></span></div>
+              <div id="cov-stats" class="job-stats" style="margin-top:14px;"></div>
+            </div>
+          </section>
+          <section class="card span-2">
+            <div class="card-head"><h2>Currency Samples</h2><span class="muted">recent observations per currency</span></div>
+            <div id="diag-samples" class="diag-samples"></div>
+          </section>
+          <section class="card span-2">
+            <div class="card-head"><h2>Anomaly Log <span class="muted" id="anomaly-count"></span></h2></div>
+            <div class="table-wrap">
+              <table id="anomaly-table">
+                <thead><tr><th>When</th><th>Kind</th><th>Owner</th><th>Detail</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="scrim" id="scrim"></div>
+  <div id="toasts"></div>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script>
+    (function () {
+      var btn = document.getElementById('theme-toggle');
+      function current() { return document.documentElement.getAttribute('data-theme') || 'dark'; }
+      function paint() {
+        var icon = current() === 'dark' ? 'sun' : 'moon';
+        if (window.lucide) { btn.innerHTML = '<i data-lucide="' + icon + '"></i>'; window.lucide.createIcons(); }
+        else { btn.textContent = current() === 'dark' ? 'Light' : 'Dark'; }
+      }
+      btn.addEventListener('click', function () {
+        var next = current() === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('mm-theme', next); } catch (e) {}
+        paint();
+      });
+      if (window.lucide) window.lucide.createIcons();
+      paint();
+    })();
+  </script>
+  <script src="components.js"></script>
+  <script src="shared.js"></script>
+  <script src="page-dashboard.js"></script>
+  <script src="page-scraping.js"></script>
+  <script src="page-fleet.js"></script>
+  <script src="page-items.js"></script>
+  <script src="page-sellers.js"></script>
+  <script src="page-watchlist.js"></script>
+  <script src="page-diagnostics.js"></script>
+  <script src="page-operations.js"></script>
+</body>
+</html>
