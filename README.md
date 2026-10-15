@@ -1,4 +1,8 @@
-# Melon Marketeer
+<p align="center">
+  <img src="web/public/melon-icon.png" alt="Melon Marketeer watermelon icon" width="120" height="120">
+</p>
+
+<h1 align="center">Melon Marketeer</h1>
 
 Melon Marketeer is a shop-price tracker for Animal Jam Classic. A small fleet of bot accounts visits player dens, reads the items and prices in their personal shops, and saves every observation to a local SQLite database. A website on top of that data lets you look up what an item sells for, who is selling it, how prices differ by color, and how they change over time. It also pulls item worth from the community item-worth wiki for comparison.
 
@@ -53,6 +57,32 @@ PROXY_URL=http://user:password@proxy.example.com:8080
 ```
 
 Logins, session checks and the game socket all go through it.
+
+Restart `npm start` after editing `.env`. It is only read at startup, and a mistake in the file is ignored silently.
+
+## Troubleshooting
+
+### Login fails with `AJ authenticator returned non-JSON (status 403): 403 Forbidden`
+
+The login request was refused before it reached the account check, so the username and password are not the problem. A plain `403 Forbidden` that is not a JSON reply means something between you and Animal Jam rejected the request. In order of likelihood:
+
+1. **The proxy IP is blocked.** Animal Jam's login endpoint rejects many datacenter IP ranges. Webshare's default and free plans are datacenter proxies, so they are the usual cause. Switch to a rotating residential plan, which is a separate product from the datacenter proxy list, and use its rotating endpoint so each login gets a fresh IP.
+2. **The proxy itself is refusing the request.** Some providers answer `403` when the account has no bandwidth left, the plan has expired, the target host is not allowed on your plan, or the machine's IP is not on the provider's authorized list. Check the provider dashboard.
+3. **The `PROXY_URL` is malformed.** Use `http://username:password@host:port`. If the username or password contains `@`, `:`, `#`, `/` or `%`, percent-encode it (`@` becomes `%40`).
+4. **The `.env` was not picked up.** The file must be named `.env` (not `.env.txt`) and sit in the project root next to `index.js`, and the app must be restarted after you edit it.
+
+To find out which one it is, test the proxy outside the app (use `curl.exe` on Windows PowerShell):
+
+```
+curl -x http://user:password@host:port https://api.ipify.org
+curl -x http://user:password@host:port -i https://authenticator.animaljam.com/
+```
+
+- If the first command fails or prints your real IP, the proxy is the problem: fix the credentials, bandwidth or plan.
+- If the first works but the second returns `403`, the proxy's IP range is blocked by Animal Jam. Change proxy type, not settings.
+- If both work with the proxy but logins still fail, remove `PROXY_URL` and try one throwaway account on your own connection to rule out the proxy. Only do this with an account you can afford to lose, since this exposes your IP.
+
+Other error codes: `429` means too many logins too fast (raise `LOGIN_STAGGER_MS` in `.env`, or log in fewer accounts at once), and `407` means the proxy rejected your username or password.
 
 ## Scripts
 
